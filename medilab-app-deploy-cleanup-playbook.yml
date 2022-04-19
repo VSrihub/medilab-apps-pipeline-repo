@@ -1,0 +1,16 @@
+---
+  - name: k8s-db-manifest-deployment
+    hosts: k8s-master-machine
+    become: 'yes'
+    become_user: clusteradmin
+    tasks:
+        - name: delete application service
+          shell: kubectl delete -f dev_applications/5_medilab-monolith-app-service.yml
+        - name: delete application deployment
+          shell: kubectl delete -f dev_applications/4_medilab-monolith-app-deployment.yml
+        - name: delete config secrete
+          shell: kubectl delete -f dev_applications/3_image-registry-secret.yml
+        - name: delete the configmap
+          shell: kubectl delete -f dev_applications/2_medilabConfigurationsMap-be-ns.yml
+        - name: delete the name space
+          shell: kubectl delete -f dev_applications/1_dev-applications-ns.yml
