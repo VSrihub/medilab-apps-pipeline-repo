@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: medilab-monolith-db-server
+  labels: 
+    app: medilab-monolith-db-server
+  namespace: dev-database  
+spec: 
+  replicas: 1
+  selector: 
+    matchLabels: 
+      app: medilab-monolith-db-server
+  template:
+    metadata: 
+      name: medilab-molith-app-pod
+      labels:
+        app: medilab-monolith-db-server
+    spec:
+      volumes:
+      - name: medilab-monolith-db-volume
+        # hostPath:
+        # path: /var/opt/mysql/
+        persistentVolumeClaim:
+           claimName: mysql-pvc
+        
+      containers:
+       - name: medilab-monolith-db-server
+         image: mysql
+         ports:
+          - containerPort: 3306
+         volumeMounts:
+         - name: medilab-monolith-db-volume
+           mountPath: /var/lib/mysql
+         env:
+            - name: MYSQL_ROOT_PASSWORD
+              #value: root  
+              valueFrom:
+                secretKeyRef: 
+                  name: medilab-config-secrete
+                  key: MYSQL_ROOT_PASSWORD_VALUE
+            - name: MYSQL_DATABASE
+              #value: medilab-preclinic-monolith
+              valueFrom:
+                 configMapKeyRef:
+                   name: medilab-configmap
+                   key: MYSQL_DATABASE_NAME
+             
