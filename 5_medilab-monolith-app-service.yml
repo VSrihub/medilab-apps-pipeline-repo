@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: medilab-monlith-app-service
+  labels:
+    app: medilab-monlith-app-service
+  namespace: dev-applications
+spec:
+  #type: LoadBalancer
+  type: NodePort
+  selector:
+    app: medilab-monolith-app
+  ports:
+     - protocol: TCP
+       port: 8087
+       targetPort: 8087
+       nodePort: 32508

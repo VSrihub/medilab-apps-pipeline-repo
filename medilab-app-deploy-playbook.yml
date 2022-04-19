@@ -1,0 +1,16 @@
+---
+  - name: k8s-db-manifest-deployment
+    hosts: k8s-master-machine
+    become: 'yes'
+    become_user: clusteradmin
+    tasks:
+        - name: create the name space
+          shell: kubectl apply -f dev_applications/1_dev-applications-ns.yml
+        - name: create the configmap
+          shell: kubectl apply -f dev_applications/2_medilabConfigurationsMap-be-ns.yml
+        - name: create config secrete
+          shell: kubectl apply -f dev_applications/3_image-registry-secret.yml
+        - name: create application deployment
+          shell: kubectl apply -f dev_applications/4_medilab-monolith-app-deployment.yml
+        - name: create application service
+          shell: kubectl apply -f dev_applications/5_medilab-monolith-app-service.yml

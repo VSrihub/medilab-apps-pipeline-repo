@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: medilab-monolith-app
+  labels: 
+    app: medilab-monolith-app
+  namespace: dev-applications
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+       app: medilab-monolith-app
+  template:
+      metadata:
+        name: medilab-monolith-app-pod
+        labels:
+           app: medilab-monolith-app
+      spec:
+         imagePullSecrets:
+          - name: medilab-image-registry
+         containers:
+           - name: medilab-monolith-app-container
+             #image: narsi1839/medilab-monolith-app-image
+             image: narsi1839/medilab-monolith-boot-app-image:latest
+             ports:
+               - containerPort: 8087
+             env:
+              - name: MEDILAB_MONOLITH_APP_DB_USER_NAME
+                value: root
+
+              - name: MEDILAB_MONOLITH_APP_DB_PASSWORD
+                value: root
+
+              - name: MEDILAB_MONOLITH_APP_DB_TYPE
+                #value: mysql
+                valueFrom:
+                  configMapKeyRef:
+                    name: medilab-configmap-be-ns
+                    key: MEDILAB_DB_TYPE
+              # here give db service name not deployment name
+              
+              - name: MEDILAB_MONOLITH_APP_DB_CONTAINER_NAME
+                #value: medilab-monolith-app-db-service
+                valueFrom:
+                 configMapKeyRef:
+                  name: medilab-configmap-be-ns
+                  key: MEDILAB_DB_APP_SERVICE_NAME
+
+              - name: MEDILAB_MONOLITH_APP_DB_PORT
+                #value: "3306"
+                valueFrom:
+                 configMapKeyRef:
+                   name: medilab-configmap-be-ns
+                   key: MYSQL_DB_PORT 
+              
+              - name: MEDILAB_MONOLITH_APP_DB
+                #value: medilab-preclinic-monolith  
+                valueFrom:
+                  configMapKeyRef:
+                    name: medilab-configmap-be-ns
+                    key: MYSQL_DATABASE_NAME
